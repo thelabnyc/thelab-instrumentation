@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 import json
 import logging
 
@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)
 
 class LoggingBackend(MetricsBackend):
     """Logging metrics backend implementation."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        pass
 
     def send_metric(
         self,

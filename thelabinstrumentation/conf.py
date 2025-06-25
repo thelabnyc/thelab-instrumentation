@@ -8,7 +8,6 @@ class InstrumentationConfigData(TypedDict, total=False):
     OPTIONS: dict[str, Any]
     DIMENSIONS: dict[str, str]
     UPDATE_INTERVAL: int
-    RQ_QUEUES: list[str]
 
 
 class InstrumentationConfig:
@@ -40,11 +39,6 @@ class InstrumentationConfig:
     def update_interval(self) -> int:
         """Interval in seconds between metric updates."""
         return self.config.get("UPDATE_INTERVAL", 60)
-
-    @property
-    def rq_queues(self) -> list[str]:
-        """List of RQ queue names to monitor."""
-        return self.config.get("RQ_QUEUES", [])
 
 
 # Global configuration instance
