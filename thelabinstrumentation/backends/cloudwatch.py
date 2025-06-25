@@ -1,19 +1,18 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 import logging
 
 from botocore.exceptions import BotoCoreError, ClientError
-from mypy_boto3_cloudwatch import CloudWatchClient
-from mypy_boto3_cloudwatch.literals import StandardUnitType
-from mypy_boto3_cloudwatch.type_defs import MetricDatumTypeDef
 import boto3
 
 from .base import MetricsBackend
 
 if TYPE_CHECKING:
+    from mypy_boto3_cloudwatch import CloudWatchClient
     from mypy_boto3_cloudwatch.literals import StandardUnitType
-else:
-    StandardUnitType = str
+    from mypy_boto3_cloudwatch.type_defs import MetricDatumTypeDef
 
 logger = logging.getLogger(__name__)
 

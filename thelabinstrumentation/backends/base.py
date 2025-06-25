@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import TYPE_CHECKING, TypedDict
@@ -6,8 +8,6 @@ from ..conf import config
 
 if TYPE_CHECKING:
     from mypy_boto3_cloudwatch.literals import StandardUnitType
-else:
-    StandardUnitType = str
 
 
 class MetricData(TypedDict, total=False):

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 import json
@@ -9,8 +11,6 @@ from .base import MetricsBackend
 
 if TYPE_CHECKING:
     from mypy_boto3_cloudwatch.literals import StandardUnitType
-else:
-    StandardUnitType = str
 
 logger = logging.getLogger(__name__)
 
