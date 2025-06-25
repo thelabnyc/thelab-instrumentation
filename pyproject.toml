@@ -1,0 +1,96 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "thelab-instrumentation"
+version = "0.1.0"
+description = "Shared instrumentation and monitoring code for Django projects"
+authors = [{ name = "thelab", email = "thelabdev@thelab.co" }]
+license = { text = "ISC" }
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django (>=5.2,<6.0)",
+    "django-stubs-ext (>=5.1.3)",
+    "typing-extensions (>=4.12.0)",
+]
+
+[project.optional-dependencies]
+rq = ["django-rq (>=2.10.0)", "rq (>=1.16.0)"]
+cloudwatch = ["boto3 (>=1.35.0)"]
+
+[project.urls]
+Homepage = "https://gitlab.com/thelabnyc/thelab-instrumentation"
+Documentation = "https://gitlab.com/thelabnyc/thelab-instrumentation"
+Repository = "https://gitlab.com/thelabnyc/thelab-instrumentation"
+
+[dependency-groups]
+dev = [
+    "mypy (>=1.15.0)",
+    "ruff (>=0.11.6)",
+    "coverage (>=7.8.0)",
+    "django-stubs (>=5.1.3)",
+    "tox (>=4.25.0)",
+    "fakeredis (>=2.20.0)",
+    "boto3-stubs[cloudwatch]>=1.38.42",
+    "sentry-sdk>=2.31.0",
+    "moto[cloudwatch]>=5.1.6",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["thelabinstrumentation"]
+
+[tool.isort]
+profile = "black"
+from_first = true
+
+[tool.ruff.lint.isort]
+from-first = true
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["mypy_django_plugin.main"]
+
+# Strict mode, see mypy --help
+warn_unused_configs = true
+disallow_subclassing_any = true
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+no_implicit_reexport = true
+show_error_codes = true
+# Not turned on by strict
+strict_equality = true
+
+[tool.django-stubs]
+django_settings_module = "thelabinstrumentation.tests.settings.sqlite"
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ["thelabinstrumentation"]
+omit = ["*/thelabinstrumentation/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+ignore_errors = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+annotated_tag = true
+gpg_sign = true
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_merge_prerelease = true
+version_provider = "pep621"
+version_scheme = "pep440"
+version_files = ["pyproject.toml:version"]
+pre_bump_hooks = ["pre-commit run --all-files || true", "uv build"]
+post_bump_hooks = ["git push origin master $CZ_POST_CURRENT_TAG_VERSION"]

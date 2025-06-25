@@ -1,0 +1,47 @@
+## Dependency Management
+
+Manage python packages with `uv`. Python commands like `mypy` or
+`python manage.py test` should be run inside the uv virtualenv by means of
+`uv run`.
+
+## Common Commands
+
+- Lint: `uv run ruff check`
+- Typecheck: `uv run mypy server/`
+- Test: `uv run tox`
+- Format python code: `uv run ruff check`
+- Run pre-commit checks: `pre-commit run --all-files`
+
+## Writing Code
+
+Make all code you write as type-safe as you can. Avoid using `Any` whenever
+possible. Always use type annotations in Python code.
+
+This project uses Python 3.13, so use modern syntax. There's no reason to
+support anything older than that.
+
+In Python, favor relative imports over absolute imports wheerever possible.
+
+## Writing Tests
+
+When writing tests, lean more towards integration tests than pure unit tests.
+This especially means to not use too many mocks. Favor testing integration of
+code over mocking everything. Mocks are fine for things like network requests.
+
+## Conventional Commits
+
+When drafting a Git commit message you **must** follow the [Conventional Commits
+v1.0.0 spec] – distilled here for the model:
+
+**Allowed types** (lower-case):
+
+build, bump, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+
+**Format**:
+
+```text
+<type>(<optional-scope>): <subject line ≤ 50 chars, imperative, no
+period> (#<ticket number>)
+
+<more details>
+```
