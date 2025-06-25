@@ -1,39 +1,37 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING
 from unittest import TestCase
 
 from django.test import override_settings
 
 from ...backends.base import MetricData, MetricsBackend
 
-if TYPE_CHECKING:
-    from mypy_boto3_cloudwatch.literals import StandardUnitType
-
 
 class ConcreteBackend(MetricsBackend):
     """Concrete implementation of MetricsBackend for testing."""
 
+    metrics: list[MetricData]
+
     def __init__(self) -> None:
-        self.last_metric: dict[str, object] | None = None
+        self.metrics = []
+
+    @property
+    def last_metric(self) -> MetricData | None:
+        return self.metrics[-1]
 
     def send_metric(
         self,
-        metric_name: str,
-        value: float,
-        unit: StandardUnitType | None = None,
-        dimensions: dict[str, str] | None = None,
-        timestamp: datetime | None = None,
+        metric: MetricData,
     ) -> None:
-        """Record the metric for testing."""
-        self.last_metric = {
-            "metric_name": metric_name,
-            "value": value,
-            "unit": unit,
-            "dimensions": dimensions,
-            "timestamp": timestamp,
-        }
+        """Record a single metric for testing."""
+        self.metrics.append(metric)
+
+    def send_metrics(
+        self,
+        metrics: list[MetricData],
+    ) -> None:
+        """Record the metrics for testing."""
+        self.metrics += metrics
 
 
 class BaseBackendTestCase(TestCase):
@@ -50,9 +48,9 @@ class BaseBackendTestCase(TestCase):
         self.assertIsInstance(backend, MetricsBackend)
 
         # Test sending a metric
-        backend.send_metric("test_metric", 42.0)
+        backend.send_metric({"name": "test_metric", "value": 42.0})
         assert backend.last_metric is not None
-        self.assertEqual(backend.last_metric["metric_name"], "test_metric")
+        self.assertEqual(backend.last_metric["name"], "test_metric")
         self.assertEqual(backend.last_metric["value"], 42.0)
 
     @override_settings(
@@ -75,31 +73,3 @@ class BaseBackendTestCase(TestCase):
         # Test that original dimensions are not overridden
         all_dims = backend._get_all_dimensions({"env": "prod"})
         self.assertEqual(all_dims, {"env": "prod", "service": "backend"})
-
-    def test_metric_data_type(self) -> None:
-        """Test the MetricData TypedDict."""
-        # Create valid MetricData instances with various combinations
-        data: MetricData = {"value": 42.0}
-        self.assertEqual(data["value"], 42.0)
-
-        data = {"value": 42.0, "unit": "Count"}
-        self.assertEqual(data["unit"], "Count")
-
-        data = {"value": 42.0, "dimensions": {"service": "api"}}
-        self.assertEqual(data["dimensions"], {"service": "api"})
-
-        now = datetime.now()
-        data = {"value": 42.0, "timestamp": now}
-        self.assertEqual(data["timestamp"], now)
-
-        # Full data
-        data = {
-            "value": 42.0,
-            "unit": "Count",
-            "dimensions": {"service": "api"},
-            "timestamp": now,
-        }
-        self.assertEqual(data["value"], 42.0)
-        self.assertEqual(data["unit"], "Count")
-        self.assertEqual(data["dimensions"], {"service": "api"})
-        self.assertEqual(data["timestamp"], now)

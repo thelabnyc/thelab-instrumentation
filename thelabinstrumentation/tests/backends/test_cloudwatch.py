@@ -42,8 +42,12 @@ class CloudWatchBackendTestCase(TestCase):
 
     def test_send_metric_basic(self) -> None:
         """Test sending a basic metric."""
-        with patch.object(self.backend, "_send_batch") as mock_send_batch:
-            self.backend.send_metric("test_metric", 42.0)
+        with (
+            patch.object(self.backend, "_send_batch") as mock_send_batch,
+            patch.object(self.backend, "_get_all_dimensions", return_value={}),
+        ):
+            # Use the new interface with a single metric
+            self.backend.send_metric({"name": "test_metric", "value": 42.0})
             mock_send_batch.assert_called_once()
             args = mock_send_batch.call_args[0][0]
             self.assertEqual(len(args), 1)
@@ -55,8 +59,13 @@ class CloudWatchBackendTestCase(TestCase):
 
     def test_send_metric_with_unit(self) -> None:
         """Test sending a metric with a unit."""
-        with patch.object(self.backend, "_send_batch") as mock_send_batch:
-            self.backend.send_metric("test_metric", 42.0, unit="Count")
+        with (
+            patch.object(self.backend, "_send_batch") as mock_send_batch,
+            patch.object(self.backend, "_get_all_dimensions", return_value={}),
+        ):
+            self.backend.send_metric(
+                {"name": "test_metric", "value": 42.0, "unit": "Count"}
+            )
             mock_send_batch.assert_called_once()
             args = mock_send_batch.call_args[0][0]
             self.assertEqual(args[0]["Unit"], "Count")
@@ -64,30 +73,41 @@ class CloudWatchBackendTestCase(TestCase):
     def test_send_metric_with_timestamp(self) -> None:
         """Test sending a metric with a timestamp."""
         timestamp = datetime(2023, 1, 1, 12, 0, 0)
-        with patch.object(self.backend, "_send_batch") as mock_send_batch:
-            self.backend.send_metric("test_metric", 42.0, timestamp=timestamp)
+        with (
+            patch.object(self.backend, "_send_batch") as mock_send_batch,
+            patch.object(self.backend, "_get_all_dimensions", return_value={}),
+        ):
+            self.backend.send_metric(
+                {"name": "test_metric", "value": 42.0, "timestamp": timestamp}
+            )
             mock_send_batch.assert_called_once()
             args = mock_send_batch.call_args[0][0]
             self.assertEqual(args[0]["Timestamp"], timestamp)
 
     def test_send_metric_with_dimensions(self) -> None:
         """Test sending a metric with dimensions."""
-        with patch.object(self.backend, "_send_batch") as mock_send_batch:
-            with patch.object(
+        with (
+            patch.object(self.backend, "_send_batch") as mock_send_batch,
+            patch.object(
                 self.backend,
                 "_get_all_dimensions",
                 return_value={"service": "api", "env": "test"},
-            ):
-                self.backend.send_metric(
-                    "test_metric", 42.0, dimensions={"service": "api"}
-                )
-                mock_send_batch.assert_called_once()
-                args = mock_send_batch.call_args[0][0]
-                self.assertIn("Dimensions", args[0])
-                self.assertEqual(len(args[0]["Dimensions"]), 2)
-                dimension_dict = {d["Name"]: d["Value"] for d in args[0]["Dimensions"]}
-                self.assertEqual(dimension_dict["service"], "api")
-                self.assertEqual(dimension_dict["env"], "test")
+            ),
+        ):
+            self.backend.send_metric(
+                {
+                    "name": "test_metric",
+                    "value": 42.0,
+                    "dimensions": {"service": "api"},
+                }
+            )
+            mock_send_batch.assert_called_once()
+            args = mock_send_batch.call_args[0][0]
+            self.assertIn("Dimensions", args[0])
+            self.assertEqual(len(args[0]["Dimensions"]), 2)
+            dimension_dict = {d["Name"]: d["Value"] for d in args[0]["Dimensions"]}
+            self.assertEqual(dimension_dict["service"], "api")
+            self.assertEqual(dimension_dict["env"], "test")
 
     @patch("thelabinstrumentation.backends.cloudwatch.logger")
     def test_send_batch_success(self, mock_logger: Mock) -> None:
@@ -181,11 +201,13 @@ class CloudWatchBackendTestCase(TestCase):
         ):
             # Create a metric
             self.backend.send_metric(
-                metric_name="test_integration",
-                value=123.45,
-                unit="Count",
-                dimensions={"service": "api", "env": "test"},
-                timestamp=datetime(2023, 1, 1, 12, 0, 0),
+                {
+                    "name": "test_integration",
+                    "value": 123.45,
+                    "unit": "Count",
+                    "dimensions": {"service": "api", "env": "test"},
+                    "timestamp": datetime(2023, 1, 1, 12, 0, 0),
+                }
             )
 
             # Give moto a moment to process

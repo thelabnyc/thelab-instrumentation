@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from ..conf import config
 
@@ -10,28 +10,25 @@ if TYPE_CHECKING:
     from mypy_boto3_cloudwatch.literals import StandardUnitType
 
 
-class MetricData(TypedDict, total=False):
+class MetricData(TypedDict):
     """Type definition for metric data."""
 
+    name: str
     value: float
-    unit: StandardUnitType | None
-    dimensions: dict[str, str] | None
-    timestamp: datetime | None
+    unit: NotRequired[StandardUnitType]
+    dimensions: NotRequired[dict[str, str]]
+    timestamp: NotRequired[datetime]
 
 
 class MetricsBackend(ABC):
     """Abstract base class for metrics backends."""
 
+    def send_metric(self, metric: MetricData) -> None:
+        self.send_metrics([metric])
+
     @abstractmethod
-    def send_metric(
-        self,
-        metric_name: str,
-        value: float,
-        unit: StandardUnitType | None = None,
-        dimensions: dict[str, str] | None = None,
-        timestamp: datetime | None = None,
-    ) -> None:
-        """Send a single metric."""
+    def send_metrics(self, metrics: list[MetricData]) -> None:
+        """Send a batch of metrics."""
         pass
 
     def _get_all_dimensions(

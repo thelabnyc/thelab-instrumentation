@@ -1,16 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any
+from typing import Any
 import json
 import logging
 
 from django.utils import timezone
 
-from .base import MetricsBackend
-
-if TYPE_CHECKING:
-    from mypy_boto3_cloudwatch.literals import StandardUnitType
+from .base import MetricData, MetricsBackend
 
 logger = logging.getLogger(__name__)
 
@@ -21,20 +17,14 @@ class LoggingBackend(MetricsBackend):
     def __init__(self, **kwargs: Any) -> None:
         pass
 
-    def send_metric(
+    def send_metrics(
         self,
-        metric_name: str,
-        value: float,
-        unit: StandardUnitType | None = None,
-        dimensions: dict[str, str] | None = None,
-        timestamp: datetime | None = None,
+        metrics: list[MetricData],
     ) -> None:
         """Log a single metric."""
-        metric_data = {
-            "name": metric_name,
-            "value": value,
-            "unit": unit,
-            "dimensions": self._get_all_dimensions(dimensions),
-            "timestamp": (timestamp or timezone.now()).isoformat(),
-        }
-        logger.info("SENDMETRIC: %s", json.dumps(metric_data))
+        for metric in metrics:
+            _metric = metric | {
+                "dimensions": self._get_all_dimensions(metric.get("dimensions")),
+                "timestamp": (metric.get("timestamp") or timezone.now()).isoformat(),
+            }
+            logger.info("SENDMETRIC: %s", json.dumps(_metric))

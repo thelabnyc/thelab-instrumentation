@@ -6,8 +6,7 @@ import time
 from django_rq.utils import get_statistics
 import sentry_sdk
 
-from ..backends.base import MetricsBackend
-from ..backends.factory import get_backend
+from ..backends import MetricData, MetricsBackend, get_backend
 from ..conf import config
 
 logger = logging.getLogger(__name__)
@@ -28,21 +27,49 @@ class BackgroundMetricsSenderThread(threading.Thread):
 
     def send_metrics(self, backend: MetricsBackend) -> None:
         stats = get_statistics()  # type:ignore[no-untyped-call]
+        batch: list[MetricData] = []
         for queue_stats in stats["queues"]:
-            for our_name, stat_name in [
-                ("rq.queued-jobs", "jobs"),
-                # ("rq.finished-jobs", "finished_jobs"),
-                # ("rq.started-jobs", "started_jobs"),
-                # ("rq.failed-jobs", "failed_jobs"),
-            ]:
-                backend.send_metric(
-                    our_name,
-                    value=queue_stats[stat_name],
-                    unit="Count",
-                    dimensions={
-                        "QueueName": queue_stats["name"],
-                    },
-                )
+            dimensions = {
+                "QueueName": queue_stats["name"],
+            }
+            queued_jobs = queue_stats["jobs"]
+            num_workers = queue_stats["workers"]
+            queued_per_worker = (
+                float(queued_jobs) / float(num_workers) if num_workers > 0 else 0
+            )
+            batch.append(
+                {
+                    "name": "rq.queued-jobs",
+                    "value": queued_jobs,
+                    "unit": "Count",
+                    "dimensions": dimensions,
+                }
+            )
+            batch.append(
+                {
+                    "name": "rq.finished-jobs",
+                    "value": queue_stats["finished_jobs"],
+                    "unit": "Count",
+                    "dimensions": dimensions,
+                }
+            )
+            batch.append(
+                {
+                    "name": "rq.workers",
+                    "value": num_workers,
+                    "unit": "Count",
+                    "dimensions": dimensions,
+                }
+            )
+            batch.append(
+                {
+                    "name": "rq.queued-jobs-per-worker",
+                    "value": queued_per_worker,
+                    "unit": "Count",
+                    "dimensions": dimensions,
+                }
+            )
+        backend.send_metrics(batch)
 
 
 def ensure_bg_sender_thread_running() -> BackgroundMetricsSenderThread:

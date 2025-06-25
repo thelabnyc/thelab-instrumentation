@@ -1,10 +1,8 @@
-from datetime import datetime
-from typing import Any
 from unittest.mock import MagicMock, Mock, patch
 
 from django.test import SimpleTestCase
 
-from ...backends.base import MetricsBackend
+from ...backends import MetricData, MetricsBackend
 from ...rq.daemon import (
     BackgroundMetricsSenderThread,
     _threadlocals,
@@ -16,26 +14,15 @@ class ConcreteMetricsBackend(MetricsBackend):
     """Concrete implementation of MetricsBackend for testing."""
 
     def __init__(self) -> None:
-        self.metrics: list[dict[str, Any]] = []
+        self.metrics: list[MetricData] = []
 
-    def send_metric(
+    def send_metrics(
         self,
-        metric_name: str,
-        value: float,
-        unit: str | None = None,
-        dimensions: dict[str, str] | None = None,
-        timestamp: datetime | None = None,
+        metrics: list[MetricData],
     ) -> None:
-        """Record the metric for testing."""
-        self.metrics.append(
-            {
-                "metric_name": metric_name,
-                "value": value,
-                "unit": unit,
-                "dimensions": dimensions,
-                "timestamp": timestamp,
-            }
-        )
+        """Record the metrics for testing."""
+        for metric in metrics:
+            self.metrics.append(metric)
 
 
 class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
@@ -49,6 +36,7 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
             "queues": [
                 {
                     "name": "default",
+                    "workers": 1,
                     "jobs": 10,
                     "finished_jobs": 20,
                     "started_jobs": 30,
@@ -56,6 +44,7 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
                 },
                 {
                     "name": "high",
+                    "workers": 2,
                     "jobs": 5,
                     "finished_jobs": 15,
                     "started_jobs": 25,
@@ -71,20 +60,18 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
         thread = BackgroundMetricsSenderThread()
         thread.send_metrics(backend)
 
-        # We should have 2 metrics: 1 for each of the 2 queues
-        self.assertEqual(len(backend.metrics), 2)
+        # We should have 8 metrics: 4 for each of the 2 queues
+        self.assertEqual(len(backend.metrics), 8)
 
         # Check metrics for the default queue
         default_metrics = [
             m for m in backend.metrics if m["dimensions"]["QueueName"] == "default"
         ]
-        self.assertEqual(len(default_metrics), 1)
+        self.assertEqual(len(default_metrics), 4)
 
         # Verify each metric for default queue
         self.assertEqual(
-            [m for m in default_metrics if m["metric_name"] == "rq.queued-jobs"][0][
-                "value"
-            ],
+            [m for m in default_metrics if m["name"] == "rq.queued-jobs"][0]["value"],
             10,
         )
 
@@ -92,13 +79,11 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
         high_metrics = [
             m for m in backend.metrics if m["dimensions"]["QueueName"] == "high"
         ]
-        self.assertEqual(len(high_metrics), 1)
+        self.assertEqual(len(high_metrics), 4)
 
         # Verify each metric for high queue
         self.assertEqual(
-            [m for m in high_metrics if m["metric_name"] == "rq.queued-jobs"][0][
-                "value"
-            ],
+            [m for m in high_metrics if m["name"] == "rq.queued-jobs"][0]["value"],
             5,
         )
 

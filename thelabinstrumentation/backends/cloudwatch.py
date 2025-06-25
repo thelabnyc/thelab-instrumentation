@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING, Any
 import logging
 
 from botocore.exceptions import BotoCoreError, ClientError
 import boto3
 
-from .base import MetricsBackend
+from .base import MetricData, MetricsBackend
 
 if TYPE_CHECKING:
     from mypy_boto3_cloudwatch import CloudWatchClient
-    from mypy_boto3_cloudwatch.literals import StandardUnitType
     from mypy_boto3_cloudwatch.type_defs import MetricDatumTypeDef
 
 logger = logging.getLogger(__name__)
@@ -30,31 +28,28 @@ class CloudWatchBackend(MetricsBackend):
         self.namespace = namespace
         self.client = boto3.client("cloudwatch", **kwargs)
 
-    def send_metric(
+    def send_metrics(
         self,
-        metric_name: str,
-        value: float,
-        unit: StandardUnitType | None = None,
-        dimensions: dict[str, str] | None = None,
-        timestamp: datetime | None = None,
+        metrics: list[MetricData],
     ) -> None:
-        """Send a single metric to CloudWatch."""
-        datum: MetricDatumTypeDef = {
-            "MetricName": metric_name,
-            "Value": value,
-            "Unit": unit or "None",
-        }
-        # Add timestamp if provided - convert float to datetime
-        if timestamp:
-            datum["Timestamp"] = timestamp
-
-        # Add dimensions if provided
-        if dimensions:
-            datum["Dimensions"] = [
-                {"Name": name, "Value": value}
-                for name, value in self._get_all_dimensions(dimensions).items()
-            ]
-        self._send_batch([datum])
+        assert len(metrics) <= 1000  # TODO: autobatch this case.
+        cw_batch = []
+        for metric in metrics:
+            datum: MetricDatumTypeDef = {
+                "MetricName": metric["name"],
+                "Value": metric["value"],
+                "Unit": metric.get("unit") or "None",
+            }
+            timestamp = metric.get("timestamp")
+            if timestamp:
+                datum["Timestamp"] = timestamp
+            dimensions = self._get_all_dimensions(metric.get("dimensions"))
+            if dimensions:
+                datum["Dimensions"] = [
+                    {"Name": name, "Value": value} for name, value in dimensions.items()
+                ]
+            cw_batch.append(datum)
+        self._send_batch(cw_batch)
 
     def _send_batch(self, metric_data: list[MetricDatumTypeDef]) -> None:
         """Send a batch of metrics to CloudWatch."""
