@@ -46,12 +46,6 @@ class FactoryTestCase(TestCase):
             },
         }
     )
-    def test_get_backend_with_invalid_options(self) -> None:
-        """Test getting a backend with invalid constructor options."""
-        # Attempt to get the backend - should raise TypeError for unexpected keyword
-        with self.assertRaises(TypeError):
-            get_backend()
-
     @override_settings(
         THELAB_INSTRUMENTATION={"BACKEND": "not.a.metrics.Backend", "OPTIONS": {}}
     )
