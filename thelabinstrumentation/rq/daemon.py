@@ -31,9 +31,9 @@ class BackgroundMetricsSenderThread(threading.Thread):
         for queue_stats in stats["queues"]:
             for our_name, stat_name in [
                 ("rq.queued-jobs", "jobs"),
-                ("rq.finished-jobs", "finished_jobs"),
-                ("rq.started-jobs", "started_jobs"),
-                ("rq.failed-jobs", "failed_jobs"),
+                # ("rq.finished-jobs", "finished_jobs"),
+                # ("rq.started-jobs", "started_jobs"),
+                # ("rq.failed-jobs", "failed_jobs"),
             ]:
                 backend.send_metric(
                     our_name,

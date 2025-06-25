@@ -46,10 +46,6 @@ THELAB_INSTRUMENTATION = {
     'OPTIONS': {
         # Cloudwatch Backend
         "namespace": 'MyApplication',
-
-        # Logging Backend
-        "logger_name": "thelabinstrumentation.metrics",
-        "log_level": logging.INFO,
     },
 
     # Update interval in seconds (default: 60)
@@ -86,7 +82,7 @@ pre-commit install
 uv run tox
 
 # Run mypy type checking
-uv run mypy server/
+uv run mypy thelabinstrumentation/
 
 # Run linting
 uv run ruff check

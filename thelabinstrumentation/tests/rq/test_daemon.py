@@ -71,14 +71,14 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
         thread = BackgroundMetricsSenderThread()
         thread.send_metrics(backend)
 
-        # We should have 8 metrics: 4 types for each of the 2 queues
-        self.assertEqual(len(backend.metrics), 8)
+        # We should have 2 metrics: 1 for each of the 2 queues
+        self.assertEqual(len(backend.metrics), 2)
 
         # Check metrics for the default queue
         default_metrics = [
             m for m in backend.metrics if m["dimensions"]["QueueName"] == "default"
         ]
-        self.assertEqual(len(default_metrics), 4)
+        self.assertEqual(len(default_metrics), 1)
 
         # Verify each metric for default queue
         self.assertEqual(
@@ -87,30 +87,12 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
             ],
             10,
         )
-        self.assertEqual(
-            [m for m in default_metrics if m["metric_name"] == "rq.finished-jobs"][0][
-                "value"
-            ],
-            20,
-        )
-        self.assertEqual(
-            [m for m in default_metrics if m["metric_name"] == "rq.started-jobs"][0][
-                "value"
-            ],
-            30,
-        )
-        self.assertEqual(
-            [m for m in default_metrics if m["metric_name"] == "rq.failed-jobs"][0][
-                "value"
-            ],
-            5,
-        )
 
         # Check metrics for the high queue
         high_metrics = [
             m for m in backend.metrics if m["dimensions"]["QueueName"] == "high"
         ]
-        self.assertEqual(len(high_metrics), 4)
+        self.assertEqual(len(high_metrics), 1)
 
         # Verify each metric for high queue
         self.assertEqual(
@@ -118,24 +100,6 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
                 "value"
             ],
             5,
-        )
-        self.assertEqual(
-            [m for m in high_metrics if m["metric_name"] == "rq.finished-jobs"][0][
-                "value"
-            ],
-            15,
-        )
-        self.assertEqual(
-            [m for m in high_metrics if m["metric_name"] == "rq.started-jobs"][0][
-                "value"
-            ],
-            25,
-        )
-        self.assertEqual(
-            [m for m in high_metrics if m["metric_name"] == "rq.failed-jobs"][0][
-                "value"
-            ],
-            2,
         )
 
     @patch("thelabinstrumentation.rq.daemon.time.sleep")
