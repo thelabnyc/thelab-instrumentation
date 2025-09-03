@@ -41,6 +41,11 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["thelabinstrumentation"]
 
+[[tool.uv.index]]
+name = "thelabnyc"
+url = "https://gitlab.com/api/v4/groups/269576/-/packages/pypi/simple"
+explicit = true
+
 [tool.isort]
 profile = "black"
 from_first = true
