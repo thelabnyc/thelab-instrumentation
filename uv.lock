@@ -756,7 +756,7 @@ dev = [
     { name = "django-stubs", specifier = ">=5.2.2" },
     { name = "fakeredis", specifier = ">=2.31.1" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.11" },
-    { name = "mypy", specifier = ">=1.15.0" },
+    { name = "mypy", specifier = ">=1.17.1" },
     { name = "ruff", specifier = ">=0.12.11" },
     { name = "tox", specifier = ">=4.29.0" },
 ]
