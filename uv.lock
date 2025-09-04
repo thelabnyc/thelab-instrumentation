@@ -757,7 +757,7 @@ dev = [
     { name = "fakeredis", specifier = ">=2.31.1" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.6" },
     { name = "mypy", specifier = ">=1.15.0" },
-    { name = "ruff", specifier = ">=0.11.6" },
+    { name = "ruff", specifier = ">=0.12.11" },
     { name = "tox", specifier = ">=4.25.0" },
 ]
 
