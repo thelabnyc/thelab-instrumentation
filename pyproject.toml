@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-rq = ["django-rq (>=3.1)", "rq (>=1.16.0)"]
+rq = ["django-rq (>=3.1)", "rq (>=2.5.0)"]
 cloudwatch = ["boto3 (>=1.35.0)"]
 
 [project.urls]
