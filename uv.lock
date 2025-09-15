@@ -776,7 +776,7 @@ provides-extras = ["rq", "cloudwatch"]
 dev = [
     { name = "boto3-stubs", extras = ["cloudwatch"], specifier = ">=1.40.29" },
     { name = "coverage", specifier = ">=7.10.6" },
-    { name = "django-stubs", specifier = ">=5.2.4" },
+    { name = "django-stubs", specifier = ">=5.2.5" },
     { name = "fakeredis", specifier = ">=2.31.1" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.12" },
     { name = "mypy", specifier = ">=1.18.1" },
