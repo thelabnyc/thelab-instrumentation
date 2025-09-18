@@ -767,7 +767,7 @@ requires-dist = [
     { name = "django-rq", marker = "extra == 'rq'", specifier = ">=3.1" },
     { name = "django-stubs-ext", specifier = ">=5.2.5" },
     { name = "rq", marker = "extra == 'rq'", specifier = ">=2.6.0" },
-    { name = "sentry-sdk", specifier = ">=2.37.1" },
+    { name = "sentry-sdk", specifier = ">=2.38.0" },
     { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 provides-extras = ["rq", "cloudwatch"]
