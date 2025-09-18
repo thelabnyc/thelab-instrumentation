@@ -14,7 +14,7 @@ dependencies = [
     "django (>=5.2,<6.0)",
     "django-stubs-ext (>=5.2.5)",
     "typing-extensions (>=4.15.0)",
-    "sentry-sdk (>=2.37.1)",
+    "sentry-sdk (>=2.38.0)",
 ]
 
 [project.optional-dependencies]
