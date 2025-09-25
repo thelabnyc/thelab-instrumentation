@@ -806,7 +806,7 @@ dev = [
     { name = "boto3-stubs", extras = ["cloudwatch"], specifier = ">=1.40.34" },
     { name = "coverage", specifier = ">=7.10.7" },
     { name = "django-stubs", specifier = ">=5.2.5" },
-    { name = "fakeredis", specifier = ">=2.31.1" },
+    { name = "fakeredis", specifier = ">=2.31.3" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.13" },
     { name = "mypy", specifier = ">=1.18.2" },
     { name = "ruff", specifier = ">=0.13.1" },
