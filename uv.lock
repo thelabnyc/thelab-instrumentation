@@ -862,7 +862,7 @@ dev = [
     { name = "fakeredis", specifier = ">=2.32.0" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.14" },
     { name = "mypy", specifier = ">=1.18.2" },
-    { name = "ruff", specifier = ">=0.13.3" },
+    { name = "ruff", specifier = ">=0.14.0" },
     { name = "tox", specifier = ">=4.31.0" },
 ]
 
