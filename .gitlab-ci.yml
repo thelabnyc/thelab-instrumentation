@@ -48,6 +48,8 @@ test:lib:
     matrix:
       - PYTHON_VERSION: "3.13"
         TOX_SKIP_ENV: "^(?!py313)"
+      - PYTHON_VERSION: "3.14"
+        TOX_SKIP_ENV: "^(?!py314)"
   script:
     - uvx tox
   coverage: '/^TOTAL.+?(\d+\%)$/'
