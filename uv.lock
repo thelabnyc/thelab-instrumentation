@@ -889,7 +889,7 @@ requires-dist = [
     { name = "boto3", marker = "extra == 'cloudwatch'", specifier = ">=1.41.5" },
     { name = "django", specifier = ">=5.2,<6.0" },
     { name = "django-rq", marker = "extra == 'rq'", specifier = ">=3.2.1" },
-    { name = "django-stubs-ext", specifier = ">=5.2.7" },
+    { name = "django-stubs-ext", specifier = ">=5.2.8" },
     { name = "rq", marker = "extra == 'rq'", specifier = ">=2.6.1" },
     { name = "sentry-sdk", specifier = ">=2.46.0" },
     { name = "typing-extensions", specifier = ">=4.15.0" },
