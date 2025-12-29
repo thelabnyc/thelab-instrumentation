@@ -115,8 +115,13 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
         thread.send_metrics.assert_called_with(mock_backend)
         self.assertEqual(thread.send_metrics.call_count, 1)
 
-        # Verify sleep was called
-        mock_sleep.assert_called_once()
+        # Verify sleep was called with the configured interval
+        # Note: We use assert_any_call instead of assert_called_once because
+        # fakeredis's TcpFakeServer may call time.sleep(0) internally, and since
+        # the patch is on the shared time module, those calls are also captured.
+        from ...conf import config
+
+        mock_sleep.assert_any_call(config.update_interval)
 
         # Test exception handling
         thread.send_metrics.reset_mock()
@@ -135,8 +140,8 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
         # Verify the exception was captured by Sentry
         mock_sentry_sdk.capture_exception.assert_called_once()
 
-        # Verify sleep was called
-        mock_sleep.assert_called_once()
+        # Verify sleep was called with the configured interval
+        mock_sleep.assert_any_call(config.update_interval)
 
 
 class EnsureBgSenderThreadRunningTestCase(SimpleTestCase):
