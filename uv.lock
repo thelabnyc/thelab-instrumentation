@@ -902,7 +902,7 @@ dev = [
     { name = "coverage", specifier = ">=7.13.1" },
     { name = "django-stubs", specifier = ">=5.2.8" },
     { name = "fakeredis", specifier = ">=2.33.0" },
-    { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.18" },
+    { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.19" },
     { name = "mypy", specifier = ">=1.19.1" },
     { name = "ruff", specifier = ">=0.14.10" },
     { name = "tox", specifier = ">=4.32.0" },
