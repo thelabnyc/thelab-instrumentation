@@ -905,7 +905,7 @@ dev = [
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.19" },
     { name = "mypy", specifier = ">=1.19.1" },
     { name = "ruff", specifier = ">=0.14.10" },
-    { name = "tox", specifier = ">=4.32.0" },
+    { name = "tox", specifier = ">=4.33.0" },
 ]
 
 [[package]]
