@@ -904,7 +904,7 @@ dev = [
     { name = "fakeredis", specifier = ">=2.33.0" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.19" },
     { name = "mypy", specifier = ">=1.19.1" },
-    { name = "ruff", specifier = ">=0.14.12" },
+    { name = "ruff", specifier = ">=0.14.13" },
     { name = "tox", specifier = ">=4.34.1" },
 ]
 
