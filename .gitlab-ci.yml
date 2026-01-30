@@ -5,7 +5,7 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   UV_CACHE_DIR: "$CI_PROJECT_DIR/.cache/uv"
-  UV_VERSION: 0.9.26
+  UV_VERSION: 0.9.27
   BASE_LAYER: bookworm-slim
   UV_LINK_MODE: copy
   PYTHON_VERSION: "3.13"
