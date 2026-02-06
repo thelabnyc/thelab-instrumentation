@@ -28,30 +28,28 @@ class ConcreteMetricsBackend(MetricsBackend):
 class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
     """Test cases for the BackgroundMetricsSenderThread class."""
 
-    @patch("thelabinstrumentation.rq.daemon.get_statistics")
-    def test_send_metrics(self, mock_get_statistics: Mock) -> None:
+    @patch("thelabinstrumentation.rq.daemon.Worker")
+    @patch("thelabinstrumentation.rq.daemon.django_rq.queues.get_queues")
+    def test_send_metrics(self, mock_get_queues: Mock, mock_worker_class: Mock) -> None:
         """Test the send_metrics method."""
-        # Setup test data to avoid actual Redis connection
-        mock_get_statistics.return_value = {
-            "queues": [
-                {
-                    "name": "default",
-                    "workers": 1,
-                    "jobs": 10,
-                    "finished_jobs": 20,
-                    "started_jobs": 30,
-                    "failed_jobs": 5,
-                },
-                {
-                    "name": "high",
-                    "workers": 2,
-                    "jobs": 5,
-                    "finished_jobs": 15,
-                    "started_jobs": 25,
-                    "failed_jobs": 2,
-                },
-            ]
-        }
+        # Setup mock queues
+        mock_default_queue = Mock()
+        mock_default_queue.name = "default"
+        mock_default_queue.count = 10
+        mock_default_queue.finished_job_registry.get_job_count.return_value = 20
+
+        mock_high_queue = Mock()
+        mock_high_queue.name = "high"
+        mock_high_queue.count = 5
+        mock_high_queue.finished_job_registry.get_job_count.return_value = 15
+
+        mock_get_queues.return_value = [mock_default_queue, mock_high_queue]
+
+        # Worker.count returns different values per queue
+        def worker_count(queue: Mock) -> int:
+            return {"default": 1, "high": 2}[queue.name]
+
+        mock_worker_class.count.side_effect = worker_count
 
         # Create a concrete backend to test with
         backend = ConcreteMetricsBackend()
@@ -85,6 +83,14 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
         self.assertEqual(
             [m for m in high_metrics if m["name"] == "rq.queued-jobs"][0]["value"],
             5,
+        )
+
+        # Verify get_job_count was called with cleanup=False
+        mock_default_queue.finished_job_registry.get_job_count.assert_called_with(
+            cleanup=False,
+        )
+        mock_high_queue.finished_job_registry.get_job_count.assert_called_with(
+            cleanup=False,
         )
 
     @patch("thelabinstrumentation.rq.daemon.time.sleep")

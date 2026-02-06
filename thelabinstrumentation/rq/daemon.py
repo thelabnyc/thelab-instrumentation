@@ -3,7 +3,8 @@ import logging
 import threading
 import time
 
-from django_rq.utils import get_statistics
+from rq import Worker
+import django_rq
 import sentry_sdk
 
 from ..backends import MetricData, MetricsBackend, get_backend
@@ -26,14 +27,17 @@ class BackgroundMetricsSenderThread(threading.Thread):
             time.sleep(config.update_interval)
 
     def send_metrics(self, backend: MetricsBackend) -> None:
-        stats = get_statistics()  # type:ignore[no-untyped-call]
+        queues = django_rq.queues.get_queues()  # type:ignore[no-untyped-call]
         batch: list[MetricData] = []
-        for queue_stats in stats["queues"]:
+        for queue in queues:
             dimensions = {
-                "QueueName": queue_stats["name"],
+                "QueueName": queue.name,
             }
-            queued_jobs = queue_stats["jobs"]
-            num_workers = queue_stats["workers"]
+            queued_jobs = queue.count
+            num_workers = Worker.count(queue=queue)
+            finished_jobs = queue.finished_job_registry.get_job_count(
+                cleanup=False,
+            )
             queued_per_worker = (
                 float(queued_jobs) / float(num_workers) if num_workers > 0 else 0
             )
@@ -48,7 +52,7 @@ class BackgroundMetricsSenderThread(threading.Thread):
             batch.append(
                 {
                     "name": "rq.finished-jobs",
-                    "value": queue_stats["finished_jobs"],
+                    "value": finished_jobs,
                     "unit": "Count",
                     "dimensions": dimensions,
                 }
