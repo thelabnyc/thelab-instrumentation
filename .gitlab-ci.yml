@@ -6,7 +6,7 @@ variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   UV_CACHE_DIR: "$CI_PROJECT_DIR/.cache/uv"
   UV_VERSION: 0.10.0
-  BASE_LAYER: bookworm-slim
+  BASE_LAYER: trixie-slim
   UV_LINK_MODE: copy
   PYTHON_VERSION: "3.13"
 
