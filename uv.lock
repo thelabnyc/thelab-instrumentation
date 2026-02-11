@@ -906,7 +906,7 @@ dev = [
     { name = "coverage", specifier = ">=7.13.3" },
     { name = "django-stubs", specifier = ">=5.2.9" },
     { name = "fakeredis", specifier = ">=2.33.0" },
-    { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.20" },
+    { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.21" },
     { name = "mypy", specifier = ">=1.19.1" },
     { name = "ruff", specifier = ">=0.15.0" },
     { name = "tox", specifier = ">=4.34.1" },
