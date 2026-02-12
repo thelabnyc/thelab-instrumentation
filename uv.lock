@@ -903,7 +903,7 @@ provides-extras = ["rq", "cloudwatch"]
 [package.metadata.requires-dev]
 dev = [
     { name = "boto3-stubs", extras = ["cloudwatch"], specifier = ">=1.42.43" },
-    { name = "coverage", specifier = ">=7.13.3" },
+    { name = "coverage", specifier = ">=7.13.4" },
     { name = "django-stubs", specifier = ">=5.2.9" },
     { name = "fakeredis", specifier = ">=2.33.0" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.21" },
