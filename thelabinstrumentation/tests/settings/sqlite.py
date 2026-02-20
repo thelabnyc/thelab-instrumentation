@@ -30,8 +30,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_rq",
+    "django_tasks",
     "thelabinstrumentation",
     "thelabinstrumentation.rq",
+    "thelabinstrumentation.structlog",
 ]
 
 MIDDLEWARE = [
@@ -42,6 +44,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "thelabinstrumentation.structlog.db.QueryStatsMiddleware",
 ]
 
 ROOT_URLCONF = "thelabinstrumentation.tests.urls"
@@ -145,5 +148,15 @@ THELAB_INSTRUMENTATION = {
         "Environment": "test",
         "Application": "thelab-instrumentation-tests",
         "Team": "backend",
+    },
+    "STRUCTLOG_REQUEST_HEADERS": {
+        "x-amz-cf-id": "cf_id",
+        "x-amzn-trace-id": "x_amzn_trace_id",
+    },
+}
+
+TASKS = {
+    "default": {
+        "BACKEND": "django_tasks.backends.immediate.ImmediateBackend",
     },
 }

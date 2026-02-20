@@ -8,6 +8,7 @@ class InstrumentationConfigData(TypedDict, total=False):
     OPTIONS: dict[str, Any]
     DIMENSIONS: dict[str, str]
     UPDATE_INTERVAL: int
+    STRUCTLOG_REQUEST_HEADERS: dict[str, str]
 
 
 class InstrumentationConfig:
@@ -39,6 +40,17 @@ class InstrumentationConfig:
     def update_interval(self) -> int:
         """Interval in seconds between metric updates."""
         return self.config.get("UPDATE_INTERVAL", 60)
+
+    @property
+    def structlog_request_headers(self) -> dict[str, str]:
+        """Header name -> structlog context var name mapping."""
+        return self.config.get(
+            "STRUCTLOG_REQUEST_HEADERS",
+            {
+                "x-amz-cf-id": "cf_id",
+                "x-amzn-trace-id": "x_amzn_trace_id",
+            },
+        )
 
 
 # Global configuration instance
