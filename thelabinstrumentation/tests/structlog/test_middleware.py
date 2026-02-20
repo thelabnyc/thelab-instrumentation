@@ -36,8 +36,8 @@ class HeaderBindingMiddlewareTestCase(SimpleTestCase):
                 cf_id="abc123", x_amzn_trace_id="trace456"
             )
 
-    def test_missing_headers_default_to_empty_string(self) -> None:
-        """Test that missing headers are bound as empty strings."""
+    def test_missing_headers_are_skipped(self) -> None:
+        """Test that missing headers are not bound to contextvars."""
         middleware = HeaderBindingMiddleware(self._get_response)
         request = HttpRequest()
 
@@ -47,7 +47,21 @@ class HeaderBindingMiddlewareTestCase(SimpleTestCase):
             wraps=structlog.contextvars.bind_contextvars,
         ) as mock_bind:
             middleware(request)
-            mock_bind.assert_called_once_with(cf_id="", x_amzn_trace_id="")
+            mock_bind.assert_not_called()
+
+    def test_partial_headers_only_binds_present(self) -> None:
+        """Test that only present headers are bound."""
+        middleware = HeaderBindingMiddleware(self._get_response)
+        request = HttpRequest()
+        request.META["HTTP_X_AMZ_CF_ID"] = "abc123"
+
+        with patch.object(
+            structlog.contextvars,
+            "bind_contextvars",
+            wraps=structlog.contextvars.bind_contextvars,
+        ) as mock_bind:
+            middleware(request)
+            mock_bind.assert_called_once_with(cf_id="abc123")
 
     @override_settings(
         THELAB_INSTRUMENTATION={

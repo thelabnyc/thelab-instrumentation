@@ -21,26 +21,28 @@ class BindUsernameTestCase(SimpleTestCase):
         structlog.contextvars.clear_contextvars()
 
     def test_binds_username(self) -> None:
-        """Test that username is bound when user has a username."""
+        """Test that username is bound when user is authenticated."""
         request = Mock()
         request.user = Mock()
         request.user.username = "testuser"
+        request.user.is_authenticated = True
 
         bind_username(sender=object, request=request)
 
         ctx = structlog.contextvars.get_contextvars()
         self.assertEqual(ctx["username"], "testuser")
 
-    def test_binds_empty_string_when_username_is_none(self) -> None:
-        """Test that empty string is bound when username is None."""
+    def test_no_bind_when_anonymous(self) -> None:
+        """Test that nothing is bound for unauthenticated users."""
         request = Mock()
         request.user = Mock()
-        request.user.username = None
+        request.user.username = ""
+        request.user.is_authenticated = False
 
         bind_username(sender=object, request=request)
 
         ctx = structlog.contextvars.get_contextvars()
-        self.assertEqual(ctx["username"], "")
+        self.assertNotIn("username", ctx)
 
     def test_no_bind_when_no_user(self) -> None:
         """Test that nothing is bound when request has no user attribute."""
@@ -74,17 +76,33 @@ class TaskEnqueuedTestCase(SimpleTestCase):
     def tearDown(self) -> None:
         structlog.contextvars.clear_contextvars()
 
-    def test_binds_task_metadata(self) -> None:
-        """Test that task_id and task_path are bound on enqueue."""
+    def test_binds_task_metadata_during_log_and_unbinds(self) -> None:
+        """Test that task_id and task_path are bound for the log call, then unbound."""
         task_result = _make_task_result(task_id="task-123")
 
         with patch("thelabinstrumentation.structlog.receivers.logger") as mock_logger:
             _on_task_enqueued(sender=None, task_result=task_result)
 
+        # After enqueue, task metadata should be cleaned up from context
         ctx = structlog.contextvars.get_contextvars()
-        self.assertEqual(ctx["task_id"], "task-123")
-        self.assertEqual(ctx["task_path"], "myapp.tasks.do_work")
+        self.assertNotIn("task_id", ctx)
+        self.assertNotIn("task_path", ctx)
         mock_logger.info.assert_called_once_with("Task enqueued")
+
+    def test_does_not_leak_into_request_context(self) -> None:
+        """Test that enqueueing multiple tasks doesn't leak task_id into request context."""
+        structlog.contextvars.bind_contextvars(request_id="req-1")
+
+        task1 = _make_task_result(task_id="task-1")
+        task2 = _make_task_result(task_id="task-2")
+
+        with patch("thelabinstrumentation.structlog.receivers.logger"):
+            _on_task_enqueued(sender=None, task_result=task1)
+            _on_task_enqueued(sender=None, task_result=task2)
+
+        ctx = structlog.contextvars.get_contextvars()
+        self.assertEqual(ctx["request_id"], "req-1")
+        self.assertNotIn("task_id", ctx)
 
 
 class TaskStartedTestCase(SimpleTestCase):

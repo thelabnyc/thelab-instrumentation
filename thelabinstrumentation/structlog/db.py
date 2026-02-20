@@ -38,14 +38,15 @@ class QueryStatsMiddleware:
         _query_count.set(0)
         _query_duration_ns.set(0)
 
-        with ExitStack() as stack:
-            for conn in connections.all():
-                stack.enter_context(conn.execute_wrapper(_query_stats_wrapper))
-            response = self.get_response(request)
-
-        duration_ms = round(_query_duration_ns.get(0) / 1_000_000, 2)
-        structlog.contextvars.bind_contextvars(
-            db_query_count=_query_count.get(0),
-            db_query_duration_ms=duration_ms,
-        )
+        try:
+            with ExitStack() as stack:
+                for conn in connections.all():
+                    stack.enter_context(conn.execute_wrapper(_query_stats_wrapper))
+                response = self.get_response(request)
+        finally:
+            duration_ms = round(_query_duration_ns.get(0) / 1_000_000, 2)
+            structlog.contextvars.bind_contextvars(
+                db_query_count=_query_count.get(0),
+                db_query_duration_ms=duration_ms,
+            )
         return response

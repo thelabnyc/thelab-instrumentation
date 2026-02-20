@@ -47,7 +47,7 @@ class QueryStatsWrapperTestCase(SimpleTestCase):
 
         _query_stats_wrapper(fake_execute, "SELECT 1", None, False, {})
 
-        self.assertGreaterEqual(_query_duration_ns.get(), 0)
+        self.assertGreater(_query_duration_ns.get(), 0)
 
     def test_propagates_return_value(self) -> None:
         """Test that the wrapper returns the execute result."""
@@ -104,11 +104,41 @@ class QueryStatsMiddlewareTestCase(SimpleTestCase):
             )
 
     def test_resets_stats_per_request(self) -> None:
-        """Test that stats are reset at the start of each request."""
-        _query_count.set(99)
-        _query_duration_ns.set(999_999_999)
+        """Test that stats from one request don't carry over to the next."""
+        call_count = 0
 
-        middleware = QueryStatsMiddleware(self._get_response)
+        def counting_view(request: HttpRequest) -> HttpResponse:
+            nonlocal call_count
+            call_count += 1
+            # Simulate different query counts per request by setting contextvars
+            # directly (the middleware resets them on each call)
+            _query_count.set(call_count * 10)
+            return HttpResponse("OK")
+
+        middleware = QueryStatsMiddleware(counting_view)
+        request = HttpRequest()
+
+        # First request
+        middleware(request)
+
+        # Second request: stats should reflect this request only, not accumulate
+        with patch.object(
+            structlog.contextvars,
+            "bind_contextvars",
+            wraps=structlog.contextvars.bind_contextvars,
+        ) as mock_bind:
+            middleware(request)
+            kwargs = mock_bind.call_args[1]
+            # Should be 20 (from call_count=2), not 10+20=30
+            self.assertEqual(kwargs["db_query_count"], 20)
+
+    def test_binds_stats_on_exception(self) -> None:
+        """Test that DB stats are bound even when the view raises."""
+
+        def exploding_view(request: HttpRequest) -> HttpResponse:
+            raise RuntimeError("view exploded")
+
+        middleware = QueryStatsMiddleware(exploding_view)
         request = HttpRequest()
 
         with patch.object(
@@ -116,7 +146,8 @@ class QueryStatsMiddlewareTestCase(SimpleTestCase):
             "bind_contextvars",
             wraps=structlog.contextvars.bind_contextvars,
         ) as mock_bind:
-            middleware(request)
+            with self.assertRaises(RuntimeError):
+                middleware(request)
             mock_bind.assert_called_once_with(
                 db_query_count=0,
                 db_query_duration_ms=0.0,

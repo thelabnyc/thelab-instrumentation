@@ -17,8 +17,9 @@ class HeaderBindingMiddleware:
         bindings: dict[str, str] = {}
         for header_name, context_key in headers.items():
             meta_key = "HTTP_" + header_name.upper().replace("-", "_")
-            value = request.META.get(meta_key, "")
-            bindings[context_key] = value
+            value = request.META.get(meta_key)
+            if value is not None:
+                bindings[context_key] = value
         if bindings:
             structlog.contextvars.bind_contextvars(**bindings)
         return self.get_response(request)
