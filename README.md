@@ -87,12 +87,16 @@ THELAB_INSTRUMENTATION = {
 
 The `thelabinstrumentation.structlog` app provides:
 
-**HeaderBindingMiddleware** — Reads configured request headers and binds them to structlog contextvars. Add it to your `MIDDLEWARE`:
+**HeaderBindingMiddleware** — Reads configured request headers and binds them to structlog contextvars. Must be placed **before** `django_structlog.middlewares.RequestMiddleware` so that bound headers are included in the `request_started` log event.
+
+**QueryStatsMiddleware** — Tracks per-request database query count and total query duration, binding them as `db_query_count` and `db_query_duration_ms` to structlog contextvars. Must be placed **after** `django_structlog.middlewares.RequestMiddleware` so that the stats are bound before `request_finished` is logged. Uses Django's `connection.execute_wrapper()` API internally, so it works with any database backend without configuration changes.
 
 ```py
 MIDDLEWARE = [
     # ...
     'thelabinstrumentation.structlog.middleware.HeaderBindingMiddleware',
+    'django_structlog.middlewares.RequestMiddleware',
+    'thelabinstrumentation.structlog.db.QueryStatsMiddleware',
     # ...
 ]
 ```

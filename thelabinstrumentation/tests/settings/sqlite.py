@@ -44,6 +44,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "thelabinstrumentation.structlog.db.QueryStatsMiddleware",
 ]
 
 ROOT_URLCONF = "thelabinstrumentation.tests.urls"
