@@ -10,7 +10,7 @@ Manage python packages with `uv`. Python commands like `mypy` or
 - Typecheck: `uv run mypy server/`
 - Test: `uv run tox`
 - Format python code: `uv run ruff check`
-- Run pre-commit checks: `pre-commit run --all-files`
+- Run prek checks: `prek run --all-files`
 
 ## Writing Code
 

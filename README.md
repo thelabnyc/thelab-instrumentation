@@ -119,8 +119,8 @@ cd thelab-instrumentation
 # Install dependencies
 uv sync
 
-# Install pre-commit hooks
-pre-commit install
+# Install prek hooks
+prek install
 ```
 
 ### Run Tests
