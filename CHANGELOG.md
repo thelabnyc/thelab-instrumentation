@@ -1,5 +1,19 @@
 # Changes
 
+## v0.5.0b0 (2026-02-20)
+
+### Feat
+
+- add QueryStatsMiddleware for per-request DB query stats
+- add django-structlog helpers and task lifecycle logging
+
+### Fix
+
+- code review rework
+- **deps**: update dependency sentry-sdk to >=2.53.0
+- **deps**: update boto to >=1.42.43
+- **deps**: update dependency sentry-sdk to >=2.52.0
+
 ## v0.4.0 (2026-02-06)
 
 ### Feat
