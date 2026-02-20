@@ -21,7 +21,7 @@ dependencies = [
 rq = ["django-rq (>=3.2.2)", "rq (>=2.6.1)"]
 cloudwatch = ["boto3 (>=1.42.43)"]
 structlog = ["django-structlog (>=10.0.0)"]
-tasks = ["django-tasks (>=0.7)"]
+tasks = ["django-tasks (>=0.12.0)"]
 
 [project.urls]
 Homepage = "https://gitlab.com/thelabnyc/thelab-instrumentation"
@@ -39,7 +39,7 @@ dev = [
     "boto3-stubs[cloudwatch]>=1.42.43",
     "moto[cloudwatch]>=5.1.21",
     "django-structlog>=10.0.0",
-    "django-tasks>=0.7",
+    "django-tasks>=0.12.0",
 ]
 
 [tool.hatch.build.targets.wheel]
