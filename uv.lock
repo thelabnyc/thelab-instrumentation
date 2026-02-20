@@ -917,7 +917,7 @@ wheels = [
 
 [[package]]
 name = "thelab-instrumentation"
-version = "0.4.0"
+version = "0.5.0b0"
 source = { editable = "." }
 dependencies = [
     { name = "django" },
@@ -960,7 +960,7 @@ requires-dist = [
     { name = "boto3", marker = "extra == 'cloudwatch'", specifier = ">=1.42.43" },
     { name = "django", specifier = ">=5.2,<7.0" },
     { name = "django-rq", marker = "extra == 'rq'", specifier = ">=3.2.2" },
-    { name = "django-structlog", marker = "extra == 'structlog'", specifier = ">=8.0" },
+    { name = "django-structlog", marker = "extra == 'structlog'", specifier = ">=10.0.0" },
     { name = "django-stubs-ext", specifier = ">=5.2.9" },
     { name = "django-tasks", marker = "extra == 'tasks'", specifier = ">=0.7" },
     { name = "rq", marker = "extra == 'rq'", specifier = ">=2.6.1" },
@@ -973,7 +973,7 @@ provides-extras = ["rq", "cloudwatch", "structlog", "tasks"]
 dev = [
     { name = "boto3-stubs", extras = ["cloudwatch"], specifier = ">=1.42.43" },
     { name = "coverage", specifier = ">=7.13.4" },
-    { name = "django-structlog", specifier = ">=8.0" },
+    { name = "django-structlog", specifier = ">=10.0.0" },
     { name = "django-stubs", specifier = ">=5.2.9" },
     { name = "django-tasks", specifier = ">=0.7" },
     { name = "fakeredis", specifier = ">=2.33.0" },
