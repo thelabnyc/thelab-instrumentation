@@ -1,5 +1,16 @@
 # Changes
 
+## v0.5.0b1 (2026-02-23)
+
+### Feat
+
+- add StructlogBackend for metrics
+
+### Fix
+
+- **deps**: update dependency django-tasks to >=0.12.0
+- **deps**: update dependency django-structlog to >=10.0.0
+
 ## v0.5.0b0 (2026-02-20)
 
 ### Feat
