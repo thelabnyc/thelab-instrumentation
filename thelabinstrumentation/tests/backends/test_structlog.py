@@ -2,6 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
+import structlog.testing
+
 from ...backends.structlog import StructlogBackend
 
 
@@ -162,3 +164,26 @@ class StructlogBackendTestCase(TestCase):
             dimensions={},
             timestamp=current_time.isoformat(),
         )
+
+    def test_send_metric_with_real_logger(self) -> None:
+        """Test integration with a real structlog logger using capture_logs."""
+        current_time = datetime(2023, 1, 1, 12, 0, 0)
+
+        with (
+            structlog.testing.capture_logs() as captured,
+            patch.object(self.backend, "_get_all_dimensions", return_value={}),
+            patch("django.utils.timezone.now", return_value=current_time),
+        ):
+            self.backend.send_metric(
+                {"name": "real_log_test", "value": 123.45, "unit": "Count"}
+            )
+
+        self.assertEqual(len(captured), 1)
+        log_entry = captured[0]
+        self.assertEqual(log_entry["event"], "send_metric")
+        self.assertEqual(log_entry["log_level"], "info")
+        self.assertEqual(log_entry["name"], "real_log_test")
+        self.assertEqual(log_entry["value"], 123.45)
+        self.assertEqual(log_entry["unit"], "Count")
+        self.assertEqual(log_entry["dimensions"], {})
+        self.assertEqual(log_entry["timestamp"], current_time.isoformat())
