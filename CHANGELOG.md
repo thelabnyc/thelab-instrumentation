@@ -1,25 +1,17 @@
 # Changes
 
-## v0.5.0b1 (2026-02-23)
+## v0.5.0 (2026-02-24)
 
 ### Feat
 
 - add StructlogBackend for metrics
-
-### Fix
-
-- **deps**: update dependency django-tasks to >=0.12.0
-- **deps**: update dependency django-structlog to >=10.0.0
-
-## v0.5.0b0 (2026-02-20)
-
-### Feat
-
 - add QueryStatsMiddleware for per-request DB query stats
 - add django-structlog helpers and task lifecycle logging
 
 ### Fix
 
+- **deps**: update dependency django-tasks to >=0.12.0
+- **deps**: update dependency django-structlog to >=10.0.0
 - code review rework
 - **deps**: update dependency sentry-sdk to >=2.53.0
 - **deps**: update boto to >=1.42.43
