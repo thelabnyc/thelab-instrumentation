@@ -91,7 +91,7 @@ def connect_task_signals() -> None:
     django_tasks.signals (backport). No-op if neither is available.
     """
     try:
-        from django.tasks.signals import (  # type: ignore[import-untyped]
+        from django.tasks.signals import (
             task_enqueued,
             task_finished,
             task_started,
