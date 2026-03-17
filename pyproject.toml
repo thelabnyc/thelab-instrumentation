@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-rq = ["django-rq (>=3.2.2)", "rq (>=2.7.0)"]
+rq = ["django-rq (>=4.0.0)", "rq (>=2.7.0)"]
 cloudwatch = ["boto3 (>=1.42.67)"]
 structlog = ["django-structlog (>=10.0.0)"]
 tasks = ["django-tasks (>=0.12.0)"]
