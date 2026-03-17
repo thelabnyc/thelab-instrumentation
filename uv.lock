@@ -975,7 +975,7 @@ dev = [
 requires-dist = [
     { name = "boto3", marker = "extra == 'cloudwatch'", specifier = ">=1.42.67" },
     { name = "django", specifier = ">=5.2,<7.0" },
-    { name = "django-rq", marker = "extra == 'rq'", specifier = ">=3.2.2" },
+    { name = "django-rq", marker = "extra == 'rq'", specifier = ">=4.0.0" },
     { name = "django-structlog", marker = "extra == 'structlog'", specifier = ">=10.0.0" },
     { name = "django-stubs-ext", specifier = ">=5.2.9" },
     { name = "django-tasks", marker = "extra == 'tasks'", specifier = ">=0.12.0" },
