@@ -988,7 +988,7 @@ provides-extras = ["rq", "cloudwatch", "structlog", "tasks"]
 [package.metadata.requires-dev]
 dev = [
     { name = "boto3-stubs", extras = ["cloudwatch"], specifier = ">=1.42.67" },
-    { name = "coverage", specifier = ">=7.13.4" },
+    { name = "coverage", specifier = ">=7.13.5" },
     { name = "django-structlog", specifier = ">=10.0.0" },
     { name = "django-stubs", specifier = ">=5.2.9" },
     { name = "django-tasks", specifier = ">=0.12.0" },
