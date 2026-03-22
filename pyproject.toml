@@ -31,7 +31,7 @@ Repository = "https://gitlab.com/thelabnyc/thelab-instrumentation"
 [dependency-groups]
 dev = [
     "mypy (>=1.19.1)",
-    "ruff (>=0.15.6)",
+    "ruff (>=0.15.7)",
     "coverage (>=7.13.5)",
     "django-stubs (>=6.0.1)",
     "tox (>=4.49.1)",
