@@ -19,7 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 rq = ["django-rq (>=4.0.1)", "rq (>=2.7.0)"]
-cloudwatch = ["boto3 (>=1.42.67)"]
+cloudwatch = ["boto3 (>=1.42.72)"]
 structlog = ["django-structlog (>=10.0.0)"]
 tasks = ["django-tasks (>=0.12.0)"]
 
@@ -36,7 +36,7 @@ dev = [
     "django-stubs (>=6.0.1)",
     "tox (>=4.50.3)",
     "fakeredis (>=2.34.1)",
-    "boto3-stubs[cloudwatch]>=1.42.67",
+    "boto3-stubs[cloudwatch]>=1.42.72",
     "moto[cloudwatch]>=5.1.22",
     "django-structlog>=10.0.0",
     "django-tasks>=0.12.0",
