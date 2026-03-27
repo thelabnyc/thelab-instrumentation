@@ -1,5 +1,26 @@
 # Changes
 
+## v0.6.0 (2026-03-27)
+
+### Feat
+
+- log timing and success of all outgoing HTTP requests
+
+### Fix
+
+- **deps**: update dependency sentry-sdk to >=2.56.0
+- **deps**: update boto to >=1.42.72
+- **deps**: update dependency sentry-sdk to >=2.55.0
+- **deps**: update dependency django-stubs-ext to >=6.0.1
+- **deps**: update dependency django-stubs-ext to >=6.0.0
+- **deps**: update dependency django-rq to >=4.0.1
+- **deps**: update dependency django-rq to >=4.0.0
+- **deps**: update boto to >=1.42.67
+- **deps**: update boto to >=1.42.62
+- **deps**: update dependency sentry-sdk to >=2.54.0
+- **deps**: update boto to >=1.42.58
+- **deps**: update dependency rq to >=2.7.0
+
 ## v0.5.0 (2026-02-24)
 
 ### Feat
