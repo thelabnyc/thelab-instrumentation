@@ -1033,7 +1033,7 @@ requires-dist = [
     { name = "django-rq", marker = "extra == 'rq'", specifier = ">=4.0.1" },
     { name = "django-structlog", marker = "extra == 'outgoing-http'", specifier = ">=10.0.0" },
     { name = "django-structlog", marker = "extra == 'structlog'", specifier = ">=10.0.0" },
-    { name = "django-stubs-ext", specifier = ">=5.2,<7" },
+    { name = "django-stubs-ext", specifier = ">=6.0.1,<7" },
     { name = "django-tasks", marker = "extra == 'tasks'", specifier = ">=0.12.0" },
     { name = "rq", marker = "extra == 'rq'", specifier = ">=2.7.0" },
     { name = "sentry-sdk", specifier = ">=2.56.0" },
