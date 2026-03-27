@@ -1,5 +1,11 @@
 # Changes
 
+## v0.6.1 (2026-03-27)
+
+### Fix
+
+- django stubs version
+
 ## v0.6.0 (2026-03-27)
 
 ### Feat
