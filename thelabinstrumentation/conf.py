@@ -9,6 +9,7 @@ class InstrumentationConfigData(TypedDict, total=False):
     DIMENSIONS: dict[str, str]
     UPDATE_INTERVAL: int
     STRUCTLOG_REQUEST_HEADERS: dict[str, str]
+    OUTGOING_HTTP_EXCLUDE_HOSTS: list[str]
 
 
 class InstrumentationConfig:
@@ -40,6 +41,11 @@ class InstrumentationConfig:
     def update_interval(self) -> int:
         """Interval in seconds between metric updates."""
         return self.config.get("UPDATE_INTERVAL", 60)
+
+    @property
+    def outgoing_http_exclude_hosts(self) -> set[str]:
+        """Set of hostnames to exclude from outgoing HTTP logging."""
+        return set(self.config.get("OUTGOING_HTTP_EXCLUDE_HOSTS", []))
 
     @property
     def structlog_request_headers(self) -> dict[str, str]:
