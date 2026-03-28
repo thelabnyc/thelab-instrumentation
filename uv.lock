@@ -1038,7 +1038,7 @@ requires-dist = [
     { name = "rq", marker = "extra == 'rq'", specifier = ">=2.7.0" },
     { name = "sentry-sdk", specifier = ">=2.56.0" },
     { name = "typing-extensions", specifier = ">=4.15.0" },
-    { name = "urllib3", marker = "extra == 'outgoing-http'", specifier = ">=2.0.0" },
+    { name = "urllib3", marker = "extra == 'outgoing-http'", specifier = ">=2.6.3" },
 ]
 provides-extras = ["rq", "cloudwatch", "structlog", "outgoing-http", "tasks"]
 
@@ -1055,7 +1055,7 @@ dev = [
     { name = "mypy", specifier = ">=1.19.1" },
     { name = "ruff", specifier = ">=0.15.7" },
     { name = "tox", specifier = ">=4.50.3" },
-    { name = "urllib3", specifier = ">=2.0.0" },
+    { name = "urllib3", specifier = ">=2.6.3" },
 ]
 
 [[package]]
