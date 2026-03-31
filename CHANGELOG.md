@@ -1,5 +1,14 @@
 # Changes
 
+## v0.6.2 (2026-03-31)
+
+### Fix
+
+- django-stubs versions
+- **deps**: update boto to >=1.42.77
+- **deps**: update dependency urllib3 to >=2.6.3
+- **deps**: update dependency django-stubs-ext to >=6.0.1,<7
+
 ## v0.6.1 (2026-03-27)
 
 ### Fix
