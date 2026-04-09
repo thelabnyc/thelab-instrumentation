@@ -1,5 +1,14 @@
 # Changes
 
+## v0.6.3 (2026-04-09)
+
+### Fix
+
+- **rq**: reduce noise from RQ daemon when Redis is unavailable
+- **deps**: update dependency django-rq to >=4.1.0
+- **deps**: update boto to >=1.42.82
+- **deps**: update dependency sentry-sdk to >=2.57.0
+
 ## v0.6.2 (2026-03-31)
 
 ### Fix
