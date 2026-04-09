@@ -3,6 +3,7 @@ import logging
 import threading
 import time
 
+from redis.exceptions import ConnectionError as RedisConnectionError
 from rq import Worker
 import django_rq
 import sentry_sdk
@@ -14,17 +15,33 @@ logger = logging.getLogger(__name__)
 
 _threadlocals = local()
 
+# Max backoff multiplier when Redis is unavailable (caps at ~5 minutes with default 60s interval)
+_MAX_BACKOFF_MULTIPLIER = 5
+
 
 class BackgroundMetricsSenderThread(threading.Thread):
     def run(self) -> None:
         backend = get_backend()
+        consecutive_conn_failures = 0
         while True:
             try:
                 self.send_metrics(backend)
+                consecutive_conn_failures = 0
+            except (RedisConnectionError, ConnectionError):
+                consecutive_conn_failures += 1
+                if consecutive_conn_failures == 1:
+                    logger.debug("Redis unavailable, skipping RQ metrics")
+                elif consecutive_conn_failures % 10 == 0:
+                    logger.debug(
+                        "Redis still unavailable, skipping RQ metrics (attempt %d)",
+                        consecutive_conn_failures,
+                    )
             except Exception:
+                consecutive_conn_failures = 0
                 logger.exception("Error sending RQ metrics")
                 sentry_sdk.capture_exception()
-            time.sleep(config.update_interval)
+            backoff = min(consecutive_conn_failures, _MAX_BACKOFF_MULTIPLIER)
+            time.sleep(config.update_interval * max(1, backoff))
 
     def send_metrics(self, backend: MetricsBackend) -> None:
         queues = django_rq.queues.get_queues()  # type:ignore[no-untyped-call]
