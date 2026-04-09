@@ -149,6 +149,158 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
         # Verify sleep was called with the configured interval
         mock_sleep.assert_any_call(config.update_interval)
 
+    @patch("thelabinstrumentation.rq.daemon.time.sleep")
+    @patch("thelabinstrumentation.rq.daemon.sentry_sdk")
+    @patch("thelabinstrumentation.rq.daemon.get_backend")
+    def test_run_redis_connection_error_no_sentry(
+        self, mock_get_backend: Mock, mock_sentry_sdk: Mock, mock_sleep: Mock
+    ) -> None:
+        """Test that Redis connection errors are not reported to Sentry."""
+        from redis.exceptions import ConnectionError as RedisConnectionError
+
+        mock_backend = Mock()
+        mock_get_backend.return_value = mock_backend
+
+        thread = BackgroundMetricsSenderThread()
+        with patch.object(
+            thread,
+            "send_metrics",
+            side_effect=RedisConnectionError("Connection refused"),
+        ):
+            # Let it loop twice then break
+            mock_sleep.side_effect = [None, Exception("Stop loop")]
+
+            with self.assertRaises(Exception) as context:
+                thread.run()
+
+            self.assertEqual(str(context.exception), "Stop loop")
+
+            # Sentry should NOT have been called
+            mock_sentry_sdk.capture_exception.assert_not_called()
+
+    @patch("thelabinstrumentation.rq.daemon.time.sleep")
+    @patch("thelabinstrumentation.rq.daemon.sentry_sdk")
+    @patch("thelabinstrumentation.rq.daemon.get_backend")
+    def test_run_redis_connection_error_backoff(
+        self, mock_get_backend: Mock, mock_sentry_sdk: Mock, mock_sleep: Mock
+    ) -> None:
+        """Test that consecutive Redis connection errors cause backoff."""
+        from redis.exceptions import ConnectionError as RedisConnectionError
+
+        from ...conf import config
+
+        mock_backend = Mock()
+        mock_get_backend.return_value = mock_backend
+
+        thread = BackgroundMetricsSenderThread()
+        with patch.object(
+            thread,
+            "send_metrics",
+            side_effect=RedisConnectionError("Connection refused"),
+        ):
+            # Let it loop 3 times: sleep intervals should be 1x, 2x, 3x
+            sleep_calls: list[float] = []
+
+            def track_sleep(interval: float) -> None:
+                sleep_calls.append(interval)
+                if len(sleep_calls) >= 3:
+                    raise Exception("Stop loop")
+
+            mock_sleep.side_effect = track_sleep
+
+            with self.assertRaises(Exception):
+                thread.run()
+
+            self.assertEqual(sleep_calls[0], config.update_interval * 1)
+            self.assertEqual(sleep_calls[1], config.update_interval * 2)
+            self.assertEqual(sleep_calls[2], config.update_interval * 3)
+
+    @patch("thelabinstrumentation.rq.daemon.time.sleep")
+    @patch("thelabinstrumentation.rq.daemon.sentry_sdk")
+    @patch("thelabinstrumentation.rq.daemon.get_backend")
+    def test_run_redis_connection_error_backoff_cap(
+        self, mock_get_backend: Mock, mock_sentry_sdk: Mock, mock_sleep: Mock
+    ) -> None:
+        """Test that backoff is capped at _MAX_BACKOFF_MULTIPLIER."""
+        from redis.exceptions import ConnectionError as RedisConnectionError
+
+        from ...conf import config
+        from ...rq.daemon import _MAX_BACKOFF_MULTIPLIER
+
+        mock_backend = Mock()
+        mock_get_backend.return_value = mock_backend
+
+        thread = BackgroundMetricsSenderThread()
+        with patch.object(
+            thread,
+            "send_metrics",
+            side_effect=RedisConnectionError("Connection refused"),
+        ):
+            sleep_calls: list[float] = []
+
+            def track_sleep(interval: float) -> None:
+                sleep_calls.append(interval)
+                if len(sleep_calls) >= _MAX_BACKOFF_MULTIPLIER + 2:
+                    raise Exception("Stop loop")
+
+            mock_sleep.side_effect = track_sleep
+
+            with self.assertRaises(Exception):
+                thread.run()
+
+            max_sleep = config.update_interval * _MAX_BACKOFF_MULTIPLIER
+            # The last two calls should both be at the cap
+            self.assertEqual(sleep_calls[-1], max_sleep)
+            self.assertEqual(sleep_calls[-2], max_sleep)
+
+    @patch("thelabinstrumentation.rq.daemon.time.sleep")
+    @patch("thelabinstrumentation.rq.daemon.sentry_sdk")
+    @patch("thelabinstrumentation.rq.daemon.get_backend")
+    def test_run_redis_recovery_resets_backoff(
+        self, mock_get_backend: Mock, mock_sentry_sdk: Mock, mock_sleep: Mock
+    ) -> None:
+        """Test that backoff resets after a successful send."""
+        from redis.exceptions import ConnectionError as RedisConnectionError
+
+        from ...conf import config
+
+        mock_backend = Mock()
+        mock_get_backend.return_value = mock_backend
+
+        thread = BackgroundMetricsSenderThread()
+        # Fail twice, then succeed, then fail again
+        call_count = 0
+
+        def send_metrics_side_effect(backend: Mock) -> None:
+            nonlocal call_count
+            call_count += 1
+            if call_count <= 2:
+                raise RedisConnectionError("Connection refused")
+            if call_count == 3:
+                return  # success
+            raise RedisConnectionError("Connection refused again")
+
+        with patch.object(thread, "send_metrics", side_effect=send_metrics_side_effect):
+            sleep_calls: list[float] = []
+
+            def track_sleep(interval: float) -> None:
+                sleep_calls.append(interval)
+                if len(sleep_calls) >= 4:
+                    raise Exception("Stop loop")
+
+            mock_sleep.side_effect = track_sleep
+
+            with self.assertRaises(Exception):
+                thread.run()
+
+            # Calls: fail(1x), fail(2x), success(1x), fail(1x) — backoff reset after success
+            self.assertEqual(sleep_calls[0], config.update_interval * 1)
+            self.assertEqual(sleep_calls[1], config.update_interval * 2)
+            self.assertEqual(sleep_calls[2], config.update_interval * 1)  # reset
+            self.assertEqual(
+                sleep_calls[3], config.update_interval * 1
+            )  # first failure again
+
 
 class EnsureBgSenderThreadRunningTestCase(SimpleTestCase):
     """Test cases for the ensure_bg_sender_thread_running function."""
