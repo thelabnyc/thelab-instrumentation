@@ -1061,7 +1061,7 @@ dev = [
     { name = "fakeredis", specifier = ">=2.35.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.1.22" },
-    { name = "mypy", specifier = ">=1.20.0" },
+    { name = "mypy", specifier = ">=1.20.1" },
     { name = "ruff", specifier = ">=0.15.10" },
     { name = "tox", specifier = ">=4.52.1" },
     { name = "urllib3", specifier = ">=2.6.3" },
