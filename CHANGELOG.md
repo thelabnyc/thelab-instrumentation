@@ -1,5 +1,12 @@
 # Changes
 
+## v0.6.4 (2026-04-16)
+
+### Fix
+
+- forward positional arguments to `_original_urlopen` in `outgoing_http`
+- **deps**: update boto to >=1.42.87
+
 ## v0.6.3 (2026-04-09)
 
 ### Fix
