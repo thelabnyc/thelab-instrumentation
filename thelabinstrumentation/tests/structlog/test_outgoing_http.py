@@ -195,6 +195,45 @@ class Urllib3LoggingTest(SimpleTestCase):
         )
 
     @patch.object(outgoing_http, "logger")
+    def test_positional_args_are_forwarded_to_urlopen(
+        self, mock_logger: MagicMock
+    ) -> None:
+        fake_response = MagicMock(spec=urllib3.response.HTTPResponse)
+        fake_response.status = 200
+        fake_urlopen = MagicMock(return_value=fake_response)
+
+        self._install_with_fake_urlopen(fake_urlopen)
+        pool = self._make_pool()
+
+        retries = MagicMock()
+        result = pool.urlopen(
+            "GET",
+            "/v1/items",
+            None,
+            {},
+            retries,
+            True,
+            True,
+            timeout=1.0,
+            pool_timeout=1,
+        )
+
+        self.assertEqual(result, fake_response)
+        fake_urlopen.assert_called_once_with(
+            pool,
+            "GET",
+            "/v1/items",
+            None,
+            {},
+            retries,
+            True,
+            True,
+            timeout=1.0,
+            pool_timeout=1,
+        )
+        self.assertEqual(mock_logger.info.call_count, 2)
+
+    @patch.object(outgoing_http, "logger")
     def test_server_error_logs_warning(self, mock_logger: MagicMock) -> None:
         fake_response = MagicMock(spec=urllib3.response.HTTPResponse)
         fake_response.status = 502

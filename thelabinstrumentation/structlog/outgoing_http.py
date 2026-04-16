@@ -120,10 +120,11 @@ def _install_urllib3() -> None:
         self: urllib3.connectionpool.HTTPConnectionPool,
         method: str,
         url: str,
+        *args: Any,
         **kwargs: Any,
     ) -> urllib3.response.BaseHTTPResponse:
         if _is_excluded(self.host):
-            return _original_urlopen(self, method, url, **kwargs)
+            return _original_urlopen(self, method, url, *args, **kwargs)
 
         full_url = _redact_url(_build_url(self.scheme, self.host, self.port, url))
         request_id = str(_new_uuid())
@@ -140,7 +141,7 @@ def _install_urllib3() -> None:
 
         start_ns = time.perf_counter_ns()
         try:
-            response = _original_urlopen(self, method, url, **kwargs)
+            response = _original_urlopen(self, method, url, *args, **kwargs)
         except Exception as exc:
             duration_ms = _ns_to_ms(time.perf_counter_ns() - start_ns)
             logger.warning(
@@ -165,7 +166,7 @@ def _install_urllib3() -> None:
         )
         return response
 
-    urllib3.connectionpool.HTTPConnectionPool.urlopen = _instrumented_urlopen  # type: ignore[assignment,method-assign]
+    urllib3.connectionpool.HTTPConnectionPool.urlopen = _instrumented_urlopen  # type: ignore[method-assign]
     _installed_urllib3 = True
 
 
