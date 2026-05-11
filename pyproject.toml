@@ -21,7 +21,7 @@ dependencies = [
 rq = ["django-rq (>=4.1.0)", "rq (>=2.8.0)"]
 cloudwatch = ["boto3 (>=1.43.6)"]
 structlog = ["django-structlog (>=10.0.0)"]
-outgoing-http = ["django-structlog (>=10.0.0)", "urllib3 (>=2.6.3)"]
+outgoing-http = ["django-structlog (>=10.0.0)", "urllib3 (>=2.7.0)"]
 tasks = ["django-tasks (>=0.12.0)"]
 
 [project.urls]
@@ -41,7 +41,7 @@ dev = [
     "moto[cloudwatch]>=5.2.0",
     "django-structlog>=10.0.0",
     "django-tasks>=0.12.0",
-    "urllib3>=2.6.3",
+    "urllib3>=2.7.0",
     "httpx>=0.28.1",
 ]
 
