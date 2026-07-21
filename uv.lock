@@ -1099,7 +1099,7 @@ dev = [
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.2.2" },
     { name = "mypy", specifier = ">=2.3.0" },
     { name = "ruff", specifier = ">=0.15.22" },
-    { name = "tox", specifier = ">=4.56.4" },
+    { name = "tox", specifier = ">=4.57.0" },
     { name = "urllib3", specifier = ">=2.7.0" },
 ]
 
