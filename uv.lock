@@ -1319,7 +1319,7 @@ dev = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "moto", extras = ["cloudwatch"], specifier = ">=5.2.3" },
     { name = "mypy", specifier = ">=2.4.0" },
-    { name = "ruff", specifier = ">=0.16.10" },
+    { name = "ruff", specifier = ">=0.17.0" },
     { name = "tox", specifier = ">=4.65.1" },
     { name = "urllib3", specifier = ">=2.8.0" },
 ]
