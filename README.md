@@ -29,9 +29,9 @@ Add the package to your Django `INSTALLED_APPS`:
 ```py
 INSTALLED_APPS = [
     # ...
-    'thelabinstrumentation',
-    'thelabinstrumentation.rq',        # Include if using RQ monitoring
-    'thelabinstrumentation.structlog',  # Include if using django-structlog
+    "thelabinstrumentation",
+    "thelabinstrumentation.rq",  # Include if using RQ monitoring
+    "thelabinstrumentation.structlog",  # Include if using django-structlog
     # ...
 ]
 ```
@@ -58,27 +58,23 @@ Configure the library in your Django settings:
 ```py
 THELAB_INSTRUMENTATION = {
     # Metrics backend (default: logging backend)
-    'BACKEND': 'thelabinstrumentation.backends.cloudwatch.CloudWatchBackend',
-
+    "BACKEND": "thelabinstrumentation.backends.cloudwatch.CloudWatchBackend",
     # Backend-specific options
-    'OPTIONS': {
+    "OPTIONS": {
         # Cloudwatch Backend
-        "namespace": 'MyApplication',
+        "namespace": "MyApplication",
     },
-
     # Update interval in seconds (default: 60)
-    'UPDATE_INTERVAL': 60,
-
+    "UPDATE_INTERVAL": 60,
     # Global dimensions added to all metrics
-    'DIMENSIONS': {
-        'Environment': 'production',
-        'Application': 'my-app',
+    "DIMENSIONS": {
+        "Environment": "production",
+        "Application": "my-app",
     },
-
     # Request headers to bind to structlog context (header name -> context var name)
-    'STRUCTLOG_REQUEST_HEADERS': {
-        'x-amz-cf-id': 'cf_id',
-        'x-amzn-trace-id': 'x_amzn_trace_id',
+    "STRUCTLOG_REQUEST_HEADERS": {
+        "x-amz-cf-id": "cf_id",
+        "x-amzn-trace-id": "x_amzn_trace_id",
     },
 }
 ```
@@ -94,9 +90,9 @@ The `thelabinstrumentation.structlog` app provides:
 ```py
 MIDDLEWARE = [
     # ...
-    'thelabinstrumentation.structlog.middleware.HeaderBindingMiddleware',
-    'django_structlog.middlewares.RequestMiddleware',
-    'thelabinstrumentation.structlog.db.QueryStatsMiddleware',
+    "thelabinstrumentation.structlog.middleware.HeaderBindingMiddleware",
+    "django_structlog.middlewares.RequestMiddleware",
+    "thelabinstrumentation.structlog.db.QueryStatsMiddleware",
     # ...
 ]
 ```

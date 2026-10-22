@@ -10,6 +10,10 @@ from ...rq.daemon import (
 )
 
 
+class _StopLoopError(Exception):
+    pass
+
+
 class ConcreteMetricsBackend(MetricsBackend):
     """Concrete implementation of MetricsBackend for testing."""
 
@@ -69,7 +73,7 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
 
         # Verify each metric for default queue
         self.assertEqual(
-            [m for m in default_metrics if m["name"] == "rq.queued-jobs"][0]["value"],
+            next(m for m in default_metrics if m["name"] == "rq.queued-jobs")["value"],
             10,
         )
 
@@ -81,7 +85,7 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
 
         # Verify each metric for high queue
         self.assertEqual(
-            [m for m in high_metrics if m["name"] == "rq.queued-jobs"][0]["value"],
+            next(m for m in high_metrics if m["name"] == "rq.queued-jobs")["value"],
             5,
         )
 
@@ -204,11 +208,11 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
             def track_sleep(interval: float) -> None:
                 sleep_calls.append(interval)
                 if len(sleep_calls) >= 3:
-                    raise Exception("Stop loop")
+                    raise _StopLoopError
 
             mock_sleep.side_effect = track_sleep
 
-            with self.assertRaises(Exception):
+            with self.assertRaises(_StopLoopError):
                 thread.run()
 
             self.assertEqual(sleep_calls[0], config.update_interval * 1)
@@ -241,11 +245,11 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
             def track_sleep(interval: float) -> None:
                 sleep_calls.append(interval)
                 if len(sleep_calls) >= _MAX_BACKOFF_MULTIPLIER + 2:
-                    raise Exception("Stop loop")
+                    raise _StopLoopError
 
             mock_sleep.side_effect = track_sleep
 
-            with self.assertRaises(Exception):
+            with self.assertRaises(_StopLoopError):
                 thread.run()
 
             max_sleep = config.update_interval * _MAX_BACKOFF_MULTIPLIER
@@ -286,11 +290,11 @@ class BackgroundMetricsSenderThreadTestCase(SimpleTestCase):
             def track_sleep(interval: float) -> None:
                 sleep_calls.append(interval)
                 if len(sleep_calls) >= 4:
-                    raise Exception("Stop loop")
+                    raise _StopLoopError
 
             mock_sleep.side_effect = track_sleep
 
-            with self.assertRaises(Exception):
+            with self.assertRaises(_StopLoopError):
                 thread.run()
 
             # Calls: fail(1x), fail(2x), success(1x), fail(1x) — backoff reset after success

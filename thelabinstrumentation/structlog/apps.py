@@ -6,7 +6,7 @@ class ThelabInstrumentationStructlogConfig(AppConfig):
     label = "thelabinstrumentation_structlog"
 
     def ready(self) -> None:
-        from . import receivers  # noqa: F401 - connects @receiver handlers
+        from . import receivers
 
         receivers.connect_task_signals()
 

@@ -76,7 +76,7 @@ class LoggingBackendTestCase(TestCase):
             )
 
         # Get the JSON data from the mock call
-        message, json_data = mock_log.call_args[0]
+        _message, json_data = mock_log.call_args[0]
         data = json.loads(json_data)
 
         # Verify the unit was included in the logged data
@@ -96,7 +96,7 @@ class LoggingBackendTestCase(TestCase):
                 {"name": "test_metric", "value": 42.0, "dimensions": {"service": "api"}}
             )
 
-            message, json_data = mock_log.call_args[0]
+            _message, json_data = mock_log.call_args[0]
             data = json.loads(json_data)
 
             self.assertEqual(data["dimensions"], all_dimensions)
@@ -110,7 +110,7 @@ class LoggingBackendTestCase(TestCase):
                 {"name": "test_metric", "value": 42.0, "timestamp": timestamp}
             )
 
-        message, json_data = mock_log.call_args[0]
+        _message, json_data = mock_log.call_args[0]
         data = json.loads(json_data)
 
         self.assertEqual(data.get("timestamp"), timestamp.isoformat())
@@ -136,7 +136,7 @@ class LoggingBackendTestCase(TestCase):
                 }
             )
 
-            message, json_data = mock_log.call_args[0]
+            _message, json_data = mock_log.call_args[0]
             data = json.loads(json_data)
 
             self.assertEqual(data["name"], "test_metric")

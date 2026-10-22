@@ -42,6 +42,9 @@ include:
   - component: gitlab.com/thelabnyc/thelab-ci-components/publish-gitlab-release@0.9.0
   - component: gitlab.com/thelabnyc/thelab-ci-components/publish-to-pypi@0.9.0
 
+precommit:
+  rules:
+    - !reference [.rules_mrs_and_protected]
 
 test:lib:
   <<: *dev_dependency_job
