@@ -31,7 +31,6 @@ class QueryStatsWrapperTestCase(SimpleTestCase):
         def fake_execute(sql, params, many, context):  # type: ignore[no-untyped-def]
             nonlocal call_count
             call_count += 1
-            return None
 
         _query_stats_wrapper(fake_execute, "SELECT 1", None, False, {})
         _query_stats_wrapper(fake_execute, "SELECT 2", None, False, {})

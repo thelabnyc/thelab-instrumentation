@@ -57,11 +57,11 @@ class FactoryTestCase(TestCase):
             def __init__(self, **kwargs: Any) -> None:
                 self.kwargs = kwargs
 
-        # Apply the mock to django's import_string function
-        with patch(
-            "thelabinstrumentation.backends.factory.import_string",
-            return_value=NotAMetricsBackend,
+        with (
+            patch(
+                "thelabinstrumentation.backends.factory.import_string",
+                return_value=NotAMetricsBackend,
+            ),
+            self.assertRaises(AssertionError),
         ):
-            # Attempt to get the backend - should raise AssertionError
-            with self.assertRaises(AssertionError):
-                get_backend()
+            get_backend()

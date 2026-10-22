@@ -69,5 +69,5 @@ class CloudWatchBackend(MetricsBackend):
             logger.error(f"CloudWatch ClientError [{error_code}]: {error_message}")
         except BotoCoreError as e:
             logger.error(f"CloudWatch BotoCoreError: {e}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - metrics must never crash app
             logger.error(f"Unexpected error sending metrics to CloudWatch: {e}")

@@ -29,7 +29,6 @@ class MetricsBackend(ABC):
     @abstractmethod
     def send_metrics(self, metrics: list[MetricData]) -> None:
         """Send a batch of metrics."""
-        pass
 
     def _get_all_dimensions(
         self, dimensions: dict[str, str] | None = None

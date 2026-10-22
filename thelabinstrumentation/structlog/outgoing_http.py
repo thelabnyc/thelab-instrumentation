@@ -86,13 +86,13 @@ def _make_common(
     proxy: bool | None = None,
 ) -> dict[str, object]:
     thread = threading.current_thread()
-    common: dict[str, object] = dict(
-        outgoing_http_request_id=request_id,
-        outgoing_http_method=method,
-        outgoing_http_url=url,
-        outgoing_http_host=host,
-        thread_name=thread.name,
-    )
+    common: dict[str, object] = {
+        "outgoing_http_request_id": request_id,
+        "outgoing_http_method": method,
+        "outgoing_http_url": url,
+        "outgoing_http_host": host,
+        "thread_name": thread.name,
+    }
     if proxy is not None:
         common["outgoing_http_proxy"] = proxy
     return common
