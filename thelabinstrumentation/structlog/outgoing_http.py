@@ -18,8 +18,6 @@ keys, tokens, or PII into log aggregation systems.
 Call :func:`install` once at app startup (e.g. in ``AppConfig.ready``).
 """
 
-from __future__ import annotations
-
 from typing import Any
 import threading
 import time
