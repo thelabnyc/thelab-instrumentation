@@ -27,7 +27,7 @@ class BackgroundMetricsSenderThread(threading.Thread):
             try:
                 self.send_metrics(backend)
                 consecutive_conn_failures = 0
-            except (RedisConnectionError, ConnectionError):
+            except RedisConnectionError, ConnectionError:
                 consecutive_conn_failures += 1
                 if consecutive_conn_failures == 1:
                     logger.debug("Redis unavailable, skipping RQ metrics")
