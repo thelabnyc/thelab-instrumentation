@@ -1,5 +1,81 @@
 # Changes
 
+## v0.7.0 (2026-10-30)
+
+### Feat
+
+- test Django 6.1
+- support Python 3.15 and drop Python 3.13
+
+### Fix
+
+- **deps**: update dependency django-structlog to >=11.0.0
+- **deps**: update dependency sentry-sdk to >=2.73.0
+- **deps**: update boto to >=1.43.118
+- **deps**: update boto to >=1.43.114
+- **deps**: update dependency sentry-sdk to >=2.72.0
+- **deps**: update boto to >=1.43.110
+- **deps**: update boto to >=1.43.107
+- **deps**: update dependency sentry-sdk to >=2.71.0
+- **deps**: update boto to >=1.43.102
+- **deps**: update dependency sentry-sdk to >=2.70.0
+- **deps**: update boto to >=1.43.97
+- **deps**: update dependency urllib3 to >=2.8.0
+- **deps**: update dependency sentry-sdk to >=2.69.2
+- **deps**: update boto to >=1.43.92
+- **deps**: update dependency sentry-sdk to >=2.69.1
+- **deps**: update dependency sentry-sdk to >=2.69.0
+- **deps**: update boto to >=1.43.88
+- **deps**: update dependency rq to >=2.12.0
+- **deps**: update dependency django-rq to >=4.2.0
+- **deps**: update boto to >=1.43.82
+- **deps**: update dependency sentry-sdk to >=2.68.1
+- **deps**: update boto to >=1.43.77
+- **deps**: update dependency rq to >=2.11.0
+- **deps**: update boto to >=1.43.71
+- **deps**: update dependency sentry-sdk to >=2.68.0
+- **deps**: update dependency sentry-sdk to >=2.67.1
+- **deps**: update boto to >=1.43.66
+- **deps**: update boto to >=1.43.61
+- **deps**: update boto to >=1.43.55
+- **deps**: update dependency sentry-sdk to >=2.66.1
+- **deps**: update boto to >=1.43.50
+- **deps**: update dependency sentry-sdk to >=2.66.0
+- **deps**: update dependency sentry-sdk to >=2.65.0
+- **deps**: update boto to >=1.43.45
+- **deps**: update dependency django-rq to >=4.1.1
+- **deps**: update dependency typing-extensions to >=4.16.0
+- **deps**: update boto to >=1.43.40
+- **deps**: update dependency sentry-sdk to >=2.64.0
+- **deps**: update boto to >=1.43.36
+- **deps**: update dependency sentry-sdk to >=2.63.0
+- **deps**: update dependency rq to >=2.10.0
+- **deps**: update boto to >=1.43.33
+- **deps**: update boto to >=1.43.28
+- **deps**: update dependency sentry-sdk to >=2.62.0
+- **deps**: update dependency rq to >=2.9.1
+- **deps**: update boto to >=1.43.23
+- **deps**: update dependency sentry-sdk to >=2.61.1
+- **deps**: update dependency django-structlog to >=10.1.0
+- **deps**: update dependency sentry-sdk to >=2.61.0
+- **deps**: update boto to >=1.43.17
+- **deps**: update boto to >=1.43.13
+- **deps**: update dependency rq to >=2.9.0
+- **deps**: update boto to >=1.43.8
+- **deps**: update dependency sentry-sdk to >=2.60.0
+- **deps**: update dependency urllib3 to >=2.7.0
+- **deps**: update boto to >=1.43.6
+- **deps**: update dependency sentry-sdk to >=2.59.0
+- **deps**: update boto to >=1.43.1
+- **deps**: update boto to >=1.42.95
+- **deps**: update dependency rq to >=2.8.0
+- **deps**: update boto to >=1.42.90
+- **deps**: update dependency sentry-sdk to >=2.58.0
+
+### Refactor
+
+- adopt Python 3.14 syntax
+
 ## v0.6.4 (2026-04-16)
 
 ### Fix
