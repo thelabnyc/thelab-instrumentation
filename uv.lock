@@ -1229,7 +1229,7 @@ requires-dist = [
     { name = "django-stubs-ext", specifier = ">=5.2.9" },
     { name = "django-tasks", marker = "extra == 'tasks'", specifier = ">=0.12.0" },
     { name = "rq", marker = "extra == 'rq'", specifier = ">=3.0.0" },
-    { name = "sentry-sdk", specifier = ">=2.75.0" },
+    { name = "sentry-sdk", specifier = ">=3.0.0" },
     { name = "typing-extensions", specifier = ">=4.16.0" },
     { name = "urllib3", marker = "extra == 'outgoing-http'", specifier = ">=2.8.0" },
 ]
